@@ -1,6 +1,7 @@
 package com.snowden.nfcinventory;
 
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.Locale;
 
 import android.app.ActionBar;
@@ -12,6 +13,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -75,6 +77,29 @@ public class MainActivity extends FragmentActivity implements
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
 		}
+		   
+		//-- DATABASE HANDLER --//
+        DatabaseHandler db = new DatabaseHandler(this);
+         
+        /**
+         * CRUD Operations
+         * */
+        // Inserting Contacts
+        Log.d("Insert: ", "Inserting .."); 
+        db.addContact(new Contact("Ravi", "9100000000"));        
+        db.addContact(new Contact("Srinivas", "9199999999"));
+        db.addContact(new Contact("Tommy", "9522222222"));
+        db.addContact(new Contact("Karthik", "9533333333"));
+         
+        // Reading all contacts
+        Log.d("Reading: ", "Reading all contacts.."); 
+        List<Contact> contacts = db.getAllContacts();       
+         
+        for (Contact cn : contacts) {
+            String log = "Id: "+cn.getID()+" ,Name: " + cn.getName() + " ,Phone: " + cn.getPhoneNumber();
+            Log.d("New Name: ", log);
+        }
+      //-- END DATABASE HANDLER --//
 	}
 
 	@Override
