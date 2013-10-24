@@ -86,10 +86,10 @@ public class MainActivity extends FragmentActivity implements
          * */
         // Inserting Contacts
         Log.d("Insert: ", "Inserting .."); 
-        db.addContact(new Contact("Ravi", "9100000000"));        
-        db.addContact(new Contact("Srinivas", "9199999999"));
-        db.addContact(new Contact("Tommy", "9522222222"));
-        db.addContact(new Contact("Karthik", "9533333333"));
+        //db.addContact(new Contact("Ravi", "9100000000"));        
+        //db.addContact(new Contact("Srinivas", "9199999999"));
+        //db.addContact(new Contact("Tommy", "9522222222"));
+        //db.addContact(new Contact("Karthik", "9533333333"));
          
         // Reading all contacts
         Log.d("Reading: ", "Reading all contacts.."); 
@@ -149,11 +149,11 @@ public class MainActivity extends FragmentActivity implements
 				case 0:
 				default:
 					fragment = new ItemList();
-					args.putInt(ItemList.ARG_SECTION_NUMBER, position + 1);
+					args.putString(ItemList.ARG_SECTION_NUMBER, "List of Current Inventory");
 					break;
 				case 1:
 					fragment = new Checkout();
-					args.putInt(Checkout.ARG_SECTION_NUMBER, position + 1);
+					args.putString(Checkout.ARG_SECTION_NUMBER, "Checkout or Check-in an Item");
 					break;
 			}
 			fragment.setArguments(args);
@@ -200,8 +200,8 @@ public class MainActivity extends FragmentActivity implements
 					container, false);
 			TextView listTextView = (TextView) rootView
 					.findViewById(R.id.section_label);
-			listTextView.setText(Integer.toString(getArguments().getInt(
-					ARG_SECTION_NUMBER)));
+			listTextView.setText(getArguments().getString(
+					ARG_SECTION_NUMBER));
 			return rootView;
 		}
 	}
@@ -227,8 +227,8 @@ public class MainActivity extends FragmentActivity implements
 					container, false);
 			TextView checkoutTextView = (TextView) rootView
 					.findViewById(R.id.section_label);
-			checkoutTextView.setText(Integer.toString(getArguments().getInt(
-					ARG_SECTION_NUMBER)));
+			checkoutTextView.setText(getArguments().getString(
+					ARG_SECTION_NUMBER));
 			return rootView;
 		}
 	}
