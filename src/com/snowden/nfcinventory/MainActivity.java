@@ -1,6 +1,8 @@
 package com.snowden.nfcinventory;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -18,6 +20,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class MainActivity extends FragmentActivity implements
@@ -78,28 +82,6 @@ public class MainActivity extends FragmentActivity implements
 					.setTabListener(this));
 		}
 		   
-		//-- DATABASE HANDLER --//
-        DatabaseHandler db = new DatabaseHandler(this);
-         
-        /**
-         * CRUD Operations
-         * */
-        // Inserting Contacts
-        Log.d("Insert: ", "Inserting .."); 
-        //db.addContact(new Contact("Ravi", "9100000000"));        
-        //db.addContact(new Contact("Srinivas", "9199999999"));
-        //db.addContact(new Contact("Tommy", "9522222222"));
-        //db.addContact(new Contact("Karthik", "9533333333"));
-         
-        // Reading all contacts
-        Log.d("Reading: ", "Reading all contacts.."); 
-        List<Contact> contacts = db.getAllContacts();       
-         
-        for (Contact cn : contacts) {
-            String log = "Id: "+cn.getID()+" ,Name: " + cn.getName() + " ,Phone: " + cn.getPhoneNumber();
-            Log.d("New Name: ", log);
-        }
-      //-- END DATABASE HANDLER --//
 	}
 
 	@Override
@@ -149,7 +131,7 @@ public class MainActivity extends FragmentActivity implements
 				case 0:
 				default:
 					fragment = new ItemList();
-					args.putString(ItemList.ARG_SECTION_NUMBER, "List of Current Inventory");
+					//args.putString(ItemList.ARG_SECTION_NUMBER, "List of Current Inventory");
 					break;
 				case 1:
 					fragment = new Checkout();
@@ -196,12 +178,18 @@ public class MainActivity extends FragmentActivity implements
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_item_list,
-					container, false);
-			TextView listTextView = (TextView) rootView
-					.findViewById(R.id.section_label);
-			listTextView.setText(getArguments().getString(
-					ARG_SECTION_NUMBER));
+			View rootView = inflater.inflate(R.layout.fragment_item_list, container, false);
+			ListView listView = (ListView) rootView.findViewById(R.id.section_list);
+			
+			//-- DATABASE HANDLER --//
+	        DatabaseHandler db = new DatabaseHandler(this.getActivity()); 
+	         
+	        ArrayList<String> items = (ArrayList<String>) db.getAllItemsAsString();       
+	        //-- END DATABASE HANDLER --//
+	        
+	        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_list_item_1, items);
+	        listView.setAdapter(adapter);
+ 
 			return rootView;
 		}
 	}
