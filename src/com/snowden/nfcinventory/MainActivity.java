@@ -175,7 +175,9 @@ public class MainActivity extends FragmentActivity implements
 		 * fragment.
 		 */
 		public static final String ARG_SECTION_NUMBER = "section_number";
-		public List<Item> items;
+		private ArrayList<String> items;
+		private DatabaseHandler db;
+		private ArrayAdapter<String> adapter;
 
 		public ItemList() {
 		}
@@ -191,11 +193,10 @@ public class MainActivity extends FragmentActivity implements
 			//-- DATABASE HANDLER --//
 	        DatabaseHandler db = new DatabaseHandler(this.getActivity());
 
-	        this.items = db.getAllItems();
-	        ArrayList<String> items = (ArrayList<String>) db.getAllItemsAsString();       
+	        items = (ArrayList<String>) db.getAllItemsAsString();       
 	        //-- END DATABASE HANDLER --//
 	        
-	        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_list_item_1, items);
+	        adapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_list_item_1, items);
 	        listView.setAdapter(adapter);
 	        
 	        registerForContextMenu(listView);
@@ -226,7 +227,9 @@ public class MainActivity extends FragmentActivity implements
 		public boolean onContextItemSelected(MenuItem item) {
 		    int itemId = item.getItemId();
 		    
-		    if (itemId == 2) Toast.makeText(getActivity(), "Item deleted", Toast.LENGTH_SHORT).show();
+		    if (itemId == 2) {
+		    	Toast.makeText(getActivity(), "Item deleted", Toast.LENGTH_SHORT).show();
+		    }
 		    
 		    return true;
 		}
