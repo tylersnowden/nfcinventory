@@ -1,8 +1,7 @@
 package com.snowden.nfcinventory;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -15,14 +14,19 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends FragmentActivity implements
 		ActionBar.TabListener {
@@ -131,7 +135,7 @@ public class MainActivity extends FragmentActivity implements
 				case 0:
 				default:
 					fragment = new ItemList();
-					//args.putString(ItemList.ARG_SECTION_NUMBER, "List of Current Inventory");
+					args.putString(ItemList.ARG_SECTION_NUMBER, "List of Current Inventory");
 					break;
 				case 1:
 					fragment = new Checkout();
@@ -171,6 +175,7 @@ public class MainActivity extends FragmentActivity implements
 		 * fragment.
 		 */
 		public static final String ARG_SECTION_NUMBER = "section_number";
+		public List<Item> items;
 
 		public ItemList() {
 		}
@@ -180,18 +185,52 @@ public class MainActivity extends FragmentActivity implements
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_item_list, container, false);
 			ListView listView = (ListView) rootView.findViewById(R.id.section_list);
+			TextView checkoutTextView = (TextView) rootView.findViewById(R.id.section_label);
+			checkoutTextView.setText(getArguments().getString(ARG_SECTION_NUMBER));
 			
 			//-- DATABASE HANDLER --//
-	        DatabaseHandler db = new DatabaseHandler(this.getActivity()); 
-	         
+	        DatabaseHandler db = new DatabaseHandler(this.getActivity());
+
+	        this.items = db.getAllItems();
 	        ArrayList<String> items = (ArrayList<String>) db.getAllItemsAsString();       
 	        //-- END DATABASE HANDLER --//
 	        
 	        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_list_item_1, items);
 	        listView.setAdapter(adapter);
+	        
+	        registerForContextMenu(listView);
+	        
+	        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+	            public void onItemClick(AdapterView<?> parentAdapter, View view, int position,long id) {
+	                TextView clickedView = (TextView) view;
+	                Toast.makeText(getActivity(), "["+id+"] - "+clickedView.getText(), Toast.LENGTH_LONG).show();
+	            }
+	        });
  
-			return rootView;
+	        return rootView;
 		}
+		
+		@Override
+		public void onCreateContextMenu(ContextMenu menu, View v,ContextMenuInfo menuInfo) {
+
+		      super.onCreateContextMenu(menu, v, menuInfo);
+		      AdapterContextMenuInfo aInfo = (AdapterContextMenuInfo) menuInfo;
+		      
+		      menu.setHeaderTitle("Options");
+		      menu.add(1, 1, 1, "Details");
+		      menu.add(1, 2, 2, "Delete");
+		}
+		
+		@Override
+		public boolean onContextItemSelected(MenuItem item) {
+		    int itemId = item.getItemId();
+		    
+		    if (itemId == 2) Toast.makeText(getActivity(), "Item deleted", Toast.LENGTH_SHORT).show();
+		    
+		    return true;
+		}
+
 	}
 	
 	/**

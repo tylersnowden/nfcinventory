@@ -121,11 +121,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
  
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
- 
+        int status;
+        String status_str;
+        
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {   
-                itemList.add(cursor.getString(1));
+            	// Format: < Name: Status >
+            	status = Integer.parseInt(cursor.getString(3));
+            	if (status == 1) status_str = " (checked out)";
+            	else status_str = " (in stock)";
+                itemList.add(cursor.getString(2)+status_str);
             } while (cursor.moveToNext());
         }
  
