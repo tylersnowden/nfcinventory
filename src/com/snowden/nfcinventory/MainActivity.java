@@ -202,26 +202,24 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			TextView checkoutTextView = (TextView) rootView.findViewById(R.id.section_label);
 			checkoutTextView.setText(getArguments().getString(ARG_SECTION_NUMBER));
 
-			//-- DATABASE HANDLER --//
-			DatabaseHandler db = new DatabaseHandler(this.getActivity());
+			db = new DatabaseHandler(getActivity());
+			
+			items = db.getAllItemsAsString();
+	        
+	        adapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_list_item_1, items);
+	        listView.setAdapter(adapter);
+	        
+	        registerForContextMenu(listView);
+	        
+	        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-			items = (ArrayList<String>) db.getAllItemsAsString();       
-			//-- END DATABASE HANDLER --//
-
-			adapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_list_item_1, items);
-			listView.setAdapter(adapter);
-
-			registerForContextMenu(listView);
-
-			listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-				public void onItemClick(AdapterView<?> parentAdapter, View view, int position,long id) {
-					TextView clickedView = (TextView) view;
-					Toast.makeText(getActivity(), "["+id+"] - "+clickedView.getText(), Toast.LENGTH_LONG).show();
-				}
-			});
-
-			return rootView;
+	            public void onItemClick(AdapterView<?> parentAdapter, View view, int position,long id) {
+	                TextView clickedView = (TextView) view;
+	                Toast.makeText(getActivity(), "["+id+"] - "+clickedView.getText(), Toast.LENGTH_LONG).show();
+	            }
+	        });
+ 
+	        return rootView;
 		}
 
 		@Override
@@ -237,13 +235,15 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 		@Override
 		public boolean onContextItemSelected(MenuItem item) {
-			int itemId = item.getItemId();
-
-			if (itemId == 2) {
-				Toast.makeText(getActivity(), "Item deleted", Toast.LENGTH_SHORT).show();
-			}
-
-			return true;
+		    int itemId = item.getItemId();
+		    		    
+		    if (itemId == 2) {
+		    	items.remove(itemId);
+		    	adapter.notifyDataSetChanged();
+		    	Toast.makeText(getActivity(), itemId+ " Item deleted", Toast.LENGTH_SHORT).show();
+		    }
+		    
+		    return true;
 		}
 
 	}
