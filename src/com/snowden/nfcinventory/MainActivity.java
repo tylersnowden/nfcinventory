@@ -189,12 +189,10 @@ public class MainActivity extends FragmentActivity implements
 			ListView listView = (ListView) rootView.findViewById(R.id.section_list);
 			TextView checkoutTextView = (TextView) rootView.findViewById(R.id.section_label);
 			checkoutTextView.setText(getArguments().getString(ARG_SECTION_NUMBER));
-			
-			//-- DATABASE HANDLER --//
-	        DatabaseHandler db = new DatabaseHandler(this.getActivity());
 
-	        items = (ArrayList<String>) db.getAllItemsAsString();       
-	        //-- END DATABASE HANDLER --//
+			db = new DatabaseHandler(getActivity());
+			
+			items = db.getAllItemsAsString();
 	        
 	        adapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_list_item_1, items);
 	        listView.setAdapter(adapter);
@@ -226,9 +224,11 @@ public class MainActivity extends FragmentActivity implements
 		@Override
 		public boolean onContextItemSelected(MenuItem item) {
 		    int itemId = item.getItemId();
-		    
+		    		    
 		    if (itemId == 2) {
-		    	Toast.makeText(getActivity(), "Item deleted", Toast.LENGTH_SHORT).show();
+		    	items.remove(itemId);
+		    	adapter.notifyDataSetChanged();
+		    	Toast.makeText(getActivity(), itemId+ " Item deleted", Toast.LENGTH_SHORT).show();
 		    }
 		    
 		    return true;
