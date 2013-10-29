@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
  
 
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -86,6 +87,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // return item
         return item;
     }
+    
+    // Getting single item by tag
+    Item getItemByTag(String tag) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_ITEMS, new String[] { KEY_ID,
+        		KEY_TAG, KEY_NAME, KEY_STATUS }, KEY_TAG + "=?",
+                new String[] { tag }, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+ 
+        Item item = new Item(Integer.parseInt(cursor.getString(0)),cursor.getString(1), cursor.getString(2), Integer.parseInt(cursor.getString(3)));
+        // return item
+        return item;
+    }
      
     // Getting All ITEMS
     public List<Item> getAllItems() {
@@ -151,6 +167,30 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // updating row
         return db.update(TABLE_ITEMS, values, KEY_ID + " = ?",
                 new String[] { String.valueOf(item.getID()) });
+    }
+    
+    // Toggle single item status
+    public String toggleItem(Item item) {
+        SQLiteDatabase db = this.getWritableDatabase();
+ 
+        ContentValues values = new ContentValues();
+        values.put(KEY_TAG, item.getTag());
+        values.put(KEY_NAME, item.getName());
+        
+        String result;
+        int status = item.getStatus();
+        
+        if (status == 1) {
+        	values.put(KEY_STATUS, 0);
+        	result = "checked out.";
+        } else {
+        	values.put(KEY_STATUS, 1); 
+        	result = "checked in.";
+        }
+ 
+        db.update(TABLE_ITEMS, values, KEY_ID + " = ?",new String[] { String.valueOf(item.getID()) });
+        
+		return result;
     }
  
     // Deleting single item

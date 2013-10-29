@@ -3,8 +3,6 @@ package com.snowden.nfcinventory;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 
 import android.app.ActionBar;
@@ -69,8 +67,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 		// Create the adapter that will return a fragment for each of the two
 		// primary sections of the app.
-		mSectionsPagerAdapter = new SectionsPagerAdapter(
-				getSupportFragmentManager());
+		mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -79,8 +76,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		// When swiping between different sections, select the corresponding
 		// tab. We can also use ActionBar.Tab#select() to do this if we have
 		// a reference to the Tab.
-		mViewPager
-		.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+		mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 			@Override
 			public void onPageSelected(int position) {
 				actionBar.setSelectedNavigationItem(position);
@@ -108,21 +104,18 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	}
 
 	@Override
-	public void onTabSelected(ActionBar.Tab tab,
-			FragmentTransaction fragmentTransaction) {
+	public void onTabSelected(ActionBar.Tab tab,FragmentTransaction fragmentTransaction) {
 		// When the given tab is selected, switch to the corresponding page in
 		// the ViewPager.
 		mViewPager.setCurrentItem(tab.getPosition());
 	}
 
 	@Override
-	public void onTabUnselected(ActionBar.Tab tab,
-			FragmentTransaction fragmentTransaction) {
+	public void onTabUnselected(ActionBar.Tab tab,FragmentTransaction fragmentTransaction) {
 	}
 
 	@Override
-	public void onTabReselected(ActionBar.Tab tab,
-			FragmentTransaction fragmentTransaction) {
+	public void onTabReselected(ActionBar.Tab tab,FragmentTransaction fragmentTransaction) {
 	}
 
 	/**
@@ -189,20 +182,32 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		public static final String ARG_SECTION_NUMBER = "section_number";
 		private ArrayList<String> items;
 		private DatabaseHandler db;
-		private ArrayAdapter<String> adapter;
+		public ArrayAdapter<String> adapter;
 
 		public ItemList() {
 		}
 
 		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_item_list, container, false);
 			ListView listView = (ListView) rootView.findViewById(R.id.section_list);
 			TextView checkoutTextView = (TextView) rootView.findViewById(R.id.section_label);
 			checkoutTextView.setText(getArguments().getString(ARG_SECTION_NUMBER));
 
 			db = new DatabaseHandler(getActivity());
+			
+			/*db.addItem(new Item("Back to the Future","jfkeEFfesfjeess",1));
+			db.addItem(new Item("The Smurfs","fet4tbv4",1));
+			db.addItem(new Item("Argo","gfsresg",1));
+			db.addItem(new Item("Finding Nemo","trhggrdddf",1));
+			db.addItem(new Item("Inception","grsjythrd",0));
+			db.addItem(new Item("Gravity","grujtjjddgfd",0));
+			db.addItem(new Item("Free Willy","rgshhrrdrgdg",1));
+			db.addItem(new Item("Turbo","shssh5hdgfd",1));
+			db.addItem(new Item("Game of Thrones","aggtrhdhd",1));
+			db.addItem(new Item("Knight's Tale","grsgshhgsh",0));
+			db.addItem(new Item("Lilo and Stich","jjkehgg3ggs",1));
+			db.addItem(new Item("Alladin","jskjjfddddfr456",0));*/
 			
 			items = db.getAllItemsAsString();
 	        
@@ -260,6 +265,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		public static final String ARG_SECTION_NUMBER = "section_number";
 		public static final String MIME_TEXT_PLAIN = "text/plain";
 		public static final String TAG = "NfcInventory";
+		private DatabaseHandler db;
 
 		private NfcAdapter mNfcAdapter;
 
@@ -272,6 +278,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			TextView checkoutTextView = (TextView) rootView.findViewById(R.id.section_label);
 			checkoutTextView.setText(getArguments().getString(ARG_SECTION_NUMBER));
 			mNfcAdapter = NfcAdapter.getDefaultAdapter(getActivity());
+			db = new DatabaseHandler(getActivity());
+			
 			if (mNfcAdapter == null) {
 				// Stop here, we definitely need NFC
 				Toast.makeText(getActivity(), "This device doesn't support NFC.", Toast.LENGTH_LONG).show();
@@ -413,7 +421,13 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		    @Override
 		    protected void onPostExecute(String result) {
 		        if (result != null) {
-		        	Toast.makeText(getActivity(), "Content: "+result, Toast.LENGTH_LONG).show();
+		        	Item tag = db.getItemByTag(result);
+		        	String status = db.toggleItem(tag);
+
+		        	Toast.makeText(getActivity(), "Item: "+tag.getName()+" "+status, Toast.LENGTH_LONG).show();
+		       
+		        } else {
+		        	Toast.makeText(getActivity(), "Tag is empty. Please register tag.", Toast.LENGTH_LONG).show();
 		        }
 		    }
 		}
