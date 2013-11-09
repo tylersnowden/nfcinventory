@@ -74,7 +74,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
  
     // Getting single item
-    Item getItem(int id) {
+    public Item getItem(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
  
         Cursor cursor = db.query(TABLE_ITEMS, new String[] { KEY_ID,
@@ -89,7 +89,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
     
     // Getting single item by tag
-    Item getItemByTag(String tag) {
+    public Item getItemByTag(String tag) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_ITEMS, new String[] { KEY_ID,
